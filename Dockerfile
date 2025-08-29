@@ -6,16 +6,20 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     unzip \
     git \
-    && docker-php-ext-install pdo pdo_mysql pdo_pgsql zip \
+    libicu-dev \
+    libonig-dev \
+    && docker-php-ext-install pdo pdo_mysql pdo_pgsql zip sockets gettext \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Enable Apache mod_rewrite (Barcode Buddy needs it)
+# Enable Apache mod_rewrite
 RUN a2enmod rewrite
 
-# Copy source code into container
+# Copy Barcode Buddy source
 COPY . /var/www/html/
 
-# Set proper permissions
+# Set permissions
 RUN chown -R www-data:www-data /var/www/html
 
 # Expose web port
