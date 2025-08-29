@@ -1,11 +1,13 @@
-FROM python:3.9-slim
+FROM php:8.2-apache
 
-WORKDIR /app
+# Install needed PHP extensions
+RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql
 
-COPY . .
+# Copy Barcode Buddy source into Apache root
+COPY . /var/www/html/
 
-RUN pip install -r requirements.txt
+# Permissions
+RUN chown -R www-data:www-data /var/www/html
 
-EXPOSE 8080
-
-CMD ["python", "app.py"]
+EXPOSE 80
+CMD ["apache2-foreground"]
